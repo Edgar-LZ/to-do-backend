@@ -29,14 +29,16 @@ public class ToDo {
         this.priority = priority;
     }
 
-    public void  toggleDone() {
-        this.done =  !done;
-        if(done) {
-            this.doneDate = new Date();
-        } else {
-            this.doneDate = null;
-        }
+    public void setAsDone() {
+         this.done = true;
+         this.doneDate = new Date();
+
     }
+    public void setAsUndone() {
+         done = false;
+         this.doneDate = null;
+    }
+
     public String getId() {
         return this.id;
     }
@@ -54,6 +56,9 @@ public class ToDo {
     }
     public Date getCreationDate() {
         return creationDate;
+    }
+    public boolean getDone() {
+        return done;
     }
 
 }

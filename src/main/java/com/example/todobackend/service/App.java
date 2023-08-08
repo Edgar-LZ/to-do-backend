@@ -31,7 +31,9 @@ public class App {
     }
     public void editToDo(String id, String text, Date dueDate, String priority) {
         ToDo todo = toDoMap.get(id);
-        todo.edit(text, dueDate, priority);
+        if(todo != null) {
+            todo.edit(text, dueDate, priority);
+        }
     }
 
     public void removeToDo(String id) {
@@ -48,9 +50,17 @@ public class App {
         }
     }
 
-    public void toggleDone(String id) {
+    public void setAsDone(String id) {
         ToDo todo = toDoMap.get(id);
-        todo.toggleDone();
+        if(todo != null) {
+            todo.setAsDone();
+        }
+    }
+    public void setAsUndone(String id) {
+        ToDo todo = toDoMap.get(id);
+        if(todo != null) {
+            todo.setAsUndone();
+        }
     }
     public ArrayList<ToDo> getToDos(int page) {
         ArrayList<ToDo> pageList = new ArrayList<>();
