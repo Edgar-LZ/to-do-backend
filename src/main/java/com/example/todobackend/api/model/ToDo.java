@@ -29,14 +29,16 @@ public class ToDo {
         this.priority = priority;
     }
 
-    public void  toggleDone() {
-        this.done =  !done;
-        if(done) {
-            this.doneDate = new Date();
-        } else {
-            this.doneDate = null;
-        }
+    public void setAsDone() {
+         this.done = true;
+         this.doneDate = new Date();
+
     }
+    public void setAsUndone() {
+         done = false;
+         this.doneDate = null;
+    }
+
     public String getId() {
         return this.id;
     }
@@ -54,6 +56,20 @@ public class ToDo {
     }
     public Date getCreationDate() {
         return creationDate;
+    }
+    public boolean getDone() {
+        return done;
+    }
+    public int compareTo(ToDo other) {
+        if(this.priority.equals(other.priority)){
+            return 0;
+        } else if(this.priority.equals("High") && (other.priority.equals("Low") || other.priority.equals("Medium"))) {
+            return 1;
+        } else if(this.priority.equals("Medium") && other.priority.equals("Low")){
+            return 1;
+        } else {
+            return -1;
+        }
     }
 
 }
