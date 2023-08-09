@@ -60,5 +60,16 @@ public class ToDo {
     public boolean getDone() {
         return done;
     }
+    public int compareTo(ToDo other) {
+        if(this.priority.equals(other.priority)){
+            return 0;
+        } else if(this.priority.equals("High") && (other.priority.equals("Low") || other.priority.equals("Medium"))) {
+            return 1;
+        } else if(this.priority.equals("Medium") && other.priority.equals("Low")){
+            return 1;
+        } else {
+            return -1;
+        }
+    }
 
 }

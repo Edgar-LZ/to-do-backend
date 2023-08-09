@@ -1,5 +1,6 @@
 package com.example.todobackend.api.controller;
 
+import com.example.todobackend.api.model.PageInfo;
 import com.example.todobackend.api.model.ToDo;
 import com.example.todobackend.service.App;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,14 +22,33 @@ public class AppController {
     }
 
     @GetMapping("/todos")
-    public ArrayList<ToDo> getToDos(@RequestParam int page) {
-        return appService.getToDos(page);
+    public PageInfo getToDos(@RequestParam(required = false, defaultValue = "1") int page,
+                             @RequestParam(required = false,defaultValue = "0") int sortByPriority,
+                             @RequestParam(required = false, defaultValue = "0") int sortByDueDate,
+                             @RequestParam(required = false, defaultValue = "all") String filterPriority,
+                             @RequestParam(required = false, defaultValue = "all") String filterDone,
+                             @RequestParam(required = false, defaultValue = "") String filterName) {
+
+        appService.sortByCreationDate();
+
+        if(sortByPriority == 1 || sortByPriority == -1) {
+            appService.sortByPriority(-1*sortByPriority);
+        }
+        if(sortByDueDate == 1 || sortByDueDate == -1) {
+            appService.sortByDueDate(-1*sortByDueDate);
+        }
+
+        ArrayList <ToDo>  toDos = appService.getToDos(page, filterDone, filterPriority, filterName);
+
+        return new PageInfo(toDos, page);
     }
 
     @PostMapping("/todos")
-    public void addToDo(@RequestParam String text, @RequestParam String dueDate, @RequestParam String priority){
+    public void addToDo(@RequestParam(required = true) String text,
+                        @RequestParam(required = false) String dueDate,
+                        @RequestParam(required = true) String priority){
         Date date = null;
-        if(! (dueDate.isEmpty() || dueDate==null) ) {
+        if(! (dueDate==null || dueDate.isEmpty()) ) {
             SimpleDateFormat formatter1 = new SimpleDateFormat("dd/MM/yyyy");
             try {
                 date = formatter1.parse(dueDate);
@@ -39,7 +59,7 @@ public class AppController {
         appService.addToDo(text, date, priority);
     }
 
-    @PostMapping("/todos/{id}")
+    @PutMapping("/todos/{id}")
     public void addToDo(@PathVariable String id, @RequestParam String text, @RequestParam String dueDate, @RequestParam String priority){
         Date date = null;
         if(! (dueDate.isEmpty() || dueDate==null) ) {
@@ -58,7 +78,7 @@ public class AppController {
         appService.setAsDone(id);
     }
 
-    @PostMapping("/todos/{id}/undone")
+    @PutMapping("/todos/{id}/undone")
     public void setAsUndone(@PathVariable String id){
         appService.setAsUndone(id);
     }
