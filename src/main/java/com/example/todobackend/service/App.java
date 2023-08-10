@@ -64,24 +64,21 @@ public class App {
         }
     }
     public ArrayList<ToDo> getToDos(int page, String filterDone, String filterPriority, String filterName) {
-        ArrayList<ToDo> pageList = new ArrayList<>();
         ArrayList<ToDo> filtered;
 
-
-
-        if(filterDone.equals("all") && filterPriority.equals("all") && filterName.isEmpty()) {
+        if(filterDone.equals("All") && filterPriority.equals("All") && filterName.isEmpty()) {
             filtered = this.toDos;
         } else {
             filtered = new ArrayList<ToDo>();
             for (ToDo todo : this.toDos) {
                 boolean add = true;
-                if (!filterDone.equals("all") &&
-                        !(filterDone.equals("done") && todo.getDone()) &&
-                        !(filterDone.equals("undone") && !todo.getDone())) {
+                if (!filterDone.equals("All") &&
+                        !(filterDone.equals("Done") && todo.getDone()) &&
+                        !(filterDone.equals("Undone") && !todo.getDone())) {
                     add = false;
                 }
 
-                if (!filterPriority.equals("all") && !filterPriority.equals(todo.getPriority())) {
+                if (!filterPriority.equals("All") && !filterPriority.equals(todo.getPriority())) {
                     add = false;
                 }
                 if (!filterName.isEmpty() && !todo.getText().toLowerCase().contains(filterName.toLowerCase())) {
@@ -97,13 +94,7 @@ public class App {
         if (page > 1 && ( (page - 1) * pageSize + filtered.size() % pageSize ) > filtered.size()) {
             return null;
         }
-        int pageStart = (page - 1) * 10;
-        int pageFinish = Math.min(filtered.size(), pageStart + 10);
-        for(int i = pageStart; i < pageFinish; i++) {
-            pageList.add(filtered.get(i));
-        }
-
-        return pageList;
+        return filtered;
     }
     public void sortByPriority(int order) { // order == 1 not decreasing , -1 not increasing
         toDos.sort((first, second) -> first.compareTo(second)*order);

@@ -22,11 +22,12 @@ public class AppController {
     }
 
     @GetMapping("/todos")
+    @CrossOrigin(origins = "http://localhost:8080", methods = {RequestMethod.GET} )
     public PageInfo getToDos(@RequestParam(required = false, defaultValue = "1") int page,
                              @RequestParam(required = false,defaultValue = "0") int sortByPriority,
                              @RequestParam(required = false, defaultValue = "0") int sortByDueDate,
-                             @RequestParam(required = false, defaultValue = "all") String filterPriority,
-                             @RequestParam(required = false, defaultValue = "all") String filterDone,
+                             @RequestParam(required = false, defaultValue = "All") String filterPriority,
+                             @RequestParam(required = false, defaultValue = "All") String filterDone,
                              @RequestParam(required = false, defaultValue = "") String filterName) {
 
         appService.sortByCreationDate();
@@ -44,6 +45,7 @@ public class AppController {
     }
 
     @PostMapping("/todos")
+    @CrossOrigin(origins = "http://localhost:8080", methods = {RequestMethod.POST})
     public void addToDo(@RequestParam(required = true) String text,
                         @RequestParam(required = false) String dueDate,
                         @RequestParam(required = true) String priority){
@@ -60,6 +62,7 @@ public class AppController {
     }
 
     @PutMapping("/todos/{id}")
+    @CrossOrigin(origins = "http://localhost:8080", methods = {RequestMethod.PUT})
     public void addToDo(@PathVariable String id, @RequestParam String text, @RequestParam String dueDate, @RequestParam String priority){
         Date date = null;
         if(! (dueDate.isEmpty() || dueDate==null) ) {
@@ -73,12 +76,22 @@ public class AppController {
         id = id.replace("%", " ");
         appService.editToDo(id, text, date, priority);
     }
+
+    @DeleteMapping("/todos/{id}")
+    @CrossOrigin(origins = "http://localhost:8080", methods = {RequestMethod.DELETE})
+    public void removeToDo(@PathVariable String id) {
+        appService.removeToDo(id);
+    }
+
+
     @PostMapping("/todos/{id}/done")
+    @CrossOrigin(origins = "http://localhost:8080", methods = {RequestMethod.POST})
     public void setAsDone(@PathVariable String id){
         appService.setAsDone(id);
     }
 
     @PutMapping("/todos/{id}/undone")
+    @CrossOrigin(origins = "http://localhost:8080", methods = {RequestMethod.PUT})
     public void setAsUndone(@PathVariable String id){
         appService.setAsUndone(id);
     }

@@ -7,12 +7,21 @@ public class PageInfo {
     private int pages;
     private int currentPage;
 
-    public PageInfo(ArrayList<ToDo> toDos, int currentPage) {
-        this.toDos = toDos;
-        this.pages = toDos.size() / 10;
-        if(toDos.size() % 10 != 0) {
+    public PageInfo(ArrayList<ToDo> allToDos, int currentPage) {
+        this.toDos = new ArrayList<ToDo>();
+
+        this.pages = allToDos.size() / 10;
+        if(allToDos.size() % 10 != 0) {
             this.pages++;
         }
+
+        int pageStart = (currentPage - 1) * 10;
+        int pageFinish = Math.min(allToDos.size(), pageStart + 10);
+
+        for(int i = pageStart; i < pageFinish; i++) {
+            toDos.add(allToDos.get(i));
+        }
+
         this.currentPage = currentPage;
     }
 
