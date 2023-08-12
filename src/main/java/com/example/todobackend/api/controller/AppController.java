@@ -67,7 +67,7 @@ public class AppController {
             }
         }
         appService.addToDo(text, date, priority);
-        return new ResponseEntity<>(new ResponseHandler(201f,
+        return new ResponseEntity<>(new ResponseHandler(201,
                 "Created!"),
                 HttpStatus.CREATED);
     }
