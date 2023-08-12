@@ -3,7 +3,10 @@ package com.example.todobackend.api.controller;
 import com.example.todobackend.api.model.PageInfo;
 import com.example.todobackend.api.model.ToDo;
 import com.example.todobackend.service.App;
+import com.example.todobackend.service.ResponseHandler;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.text.ParseException;
@@ -23,12 +26,12 @@ public class AppController {
 
     @GetMapping("/todos")
     @CrossOrigin(origins = "http://localhost:8080", methods = {RequestMethod.GET} )
-    public PageInfo getToDos(@RequestParam(required = false, defaultValue = "1") int page,
-                             @RequestParam(required = false,defaultValue = "0") int sortByPriority,
-                             @RequestParam(required = false, defaultValue = "0") int sortByDueDate,
-                             @RequestParam(required = false, defaultValue = "All") String filterPriority,
-                             @RequestParam(required = false, defaultValue = "All") String filterDone,
-                             @RequestParam(required = false, defaultValue = "") String filterName) {
+    public ResponseEntity< PageInfo> getToDos(@RequestParam(required = false, defaultValue = "1") int page,
+                                              @RequestParam(required = false,defaultValue = "0") int sortByPriority,
+                                              @RequestParam(required = false, defaultValue = "0") int sortByDueDate,
+                                              @RequestParam(required = false, defaultValue = "All") String filterPriority,
+                                              @RequestParam(required = false, defaultValue = "All") String filterDone,
+                                              @RequestParam(required = false, defaultValue = "") String filterName) {
 
         appService.sortByCreationDate();
 
@@ -41,14 +44,19 @@ public class AppController {
 
         ArrayList <ToDo>  toDos = appService.getToDos(page, filterDone, filterPriority, filterName);
 
-        return new PageInfo(toDos, page);
+        return new ResponseEntity<PageInfo>(new PageInfo(toDos, page), HttpStatus.OK);
     }
 
     @PostMapping("/todos")
     @CrossOrigin(origins = "http://localhost:8080", methods = {RequestMethod.POST})
-    public void addToDo(@RequestParam(required = true) String text,
-                        @RequestParam(required = false) String dueDate,
-                        @RequestParam(required = true) String priority){
+    public ResponseEntity<ResponseHandler> addToDo(@RequestParam(required = true) String text,
+                                                   @RequestParam(required = false) String dueDate,
+                                                   @RequestParam(required = true) String priority){
+        if( text.length() <1 || text.length() > 120) {
+            return new ResponseEntity<>(new ResponseHandler(406,
+                    "To do length must be between 0 and 120 characters."),
+                    HttpStatus.NOT_ACCEPTABLE);
+        }
         Date date = null;
         if(! (dueDate==null || dueDate.isEmpty()) ) {
             SimpleDateFormat formatter1 = new SimpleDateFormat("dd/MM/yyyy");
@@ -59,12 +67,20 @@ public class AppController {
             }
         }
         appService.addToDo(text, date, priority);
+        return new ResponseEntity<>(new ResponseHandler(201f,
+                "Created!"),
+                HttpStatus.CREATED);
     }
 
     @PutMapping("/todos/{id}")
     @CrossOrigin(origins = "http://localhost:8080", methods = {RequestMethod.PUT})
-    public void addToDo(@PathVariable String id, @RequestParam String text, @RequestParam String dueDate, @RequestParam String priority){
+    public ResponseEntity<ResponseHandler> editToDo(@PathVariable String id, @RequestParam String text, @RequestParam String dueDate, @RequestParam String priority){
         Date date = null;
+        if( text.length() <1 || text.length() > 120) {
+            return new ResponseEntity<>(new ResponseHandler(406,
+                    "To do length must be between 0 and 120 characters."),
+                    HttpStatus.NOT_ACCEPTABLE);
+        }
         if(! (dueDate.isEmpty() || dueDate==null) ) {
             SimpleDateFormat formatter1 = new SimpleDateFormat("dd/MM/yyyy");
             try {
@@ -75,6 +91,9 @@ public class AppController {
         }
         id = id.replace("%", " ");
         appService.editToDo(id, text, date, priority);
+        return new ResponseEntity<>(new ResponseHandler(201,
+                "Edited!"),
+                HttpStatus.CREATED);
     }
 
     @DeleteMapping("/todos/{id}")
